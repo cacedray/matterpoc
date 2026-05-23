@@ -177,14 +177,16 @@ async function commissionDevice(controller) {
 
 	console.log("\nSearching for device (BLE + IP)… this may take up to 120 s.");
 
-	const deviceNode = await controller.nodes.commission({
+	await controller.nodes.commission({
 		...discoveryFilter,
 		passcode: pairingData.passcode,
 		timeoutSeconds: 120,
 	});
 
 	console.log("\nDevice commissioned successfully!");
-	return deviceNode;
+	// Re-fetch from controller.nodes — the returned node isn't fully
+	// initialised for start() immediately after commission() in v0.12.
+	return [...controller.nodes][0];
 }
 
 // ─── Read the OnOff attribute ─────────────────────────────────────────────────
